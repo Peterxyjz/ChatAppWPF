@@ -25,20 +25,37 @@ namespace ChatClient
         {
             try
             {
-                // Establish the connection to the server
+                // Yêu cầu nhập tên
+                string clientName = Microsoft.VisualBasic.Interaction.InputBox(
+                    "Enter your name:",
+                    "Name Required",
+                    "Client");
+
+                if (string.IsNullOrWhiteSpace(clientName))
+                {
+                    MessageBox.Show("Name cannot be empty!");
+                    Close();
+                    return;
+                }
+
+                // Kết nối tới server
                 _client = new TcpClient(ServerIp, ServerPort);
                 NetworkStream stream = _client.GetStream();
                 _writer = new StreamWriter(stream, Encoding.UTF8) { AutoFlush = true };
                 _reader = new StreamReader(stream, Encoding.UTF8);
 
-                // Start a background thread to receive messages
+                // Gửi tên tới server
+                _writer.WriteLine(clientName);
+
+                // Bắt đầu luồng nhận tin nhắn
                 Thread receiveThread = new Thread(ReceiveMessages);
                 receiveThread.IsBackground = true;
                 receiveThread.Start();
             }
             catch (Exception ex)
             {
-                MessageBox.AppendText($"Failed to connect to server: {ex.Message}");
+                MessageBox.Show($"Failed to connect to server: {ex.Message}");
+                Close();
             }
         }
 
@@ -51,34 +68,34 @@ namespace ChatClient
                     string? message = _reader.ReadLine();
                     if (message == null) break;
 
-                    // Update the ChatBox with the received message
+                    // Cập nhật tin nhắn vào ChatBox
                     Dispatcher.Invoke(() => ChatBox.Text += $"{message}\n");
                 }
             }
             catch (Exception ex)
             {
                 Dispatcher.Invoke(() =>
-                    MessageBox.AppendText($"Error receiving messages: {ex.Message}")
+                    ChatBox.Text += $"Error receiving messages: {ex.Message}\n"
                 );
             }
         }
 
         private void SendButton_Click(object sender, RoutedEventArgs e)
         {
-            string message = MessageBox.Text;
+            string message = InputMessage.Text;
             if (!string.IsNullOrWhiteSpace(message))
             {
                 try
                 {
-                    // Send the message to the server
+                    // Gửi tin nhắn tới server
                     _writer.WriteLine(message);
 
-                    // Clear the input box after sending
-                    MessageBox.Text = string.Empty;
+                    // Xóa hộp nhập sau khi gửi
+                    InputMessage.Text = string.Empty;
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.AppendText($"Error sending message: {ex.Message}");
+                    ChatBox.Text += $"Error sending message: {ex.Message}\n";
                 }
             }
         }

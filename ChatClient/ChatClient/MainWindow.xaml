@@ -6,7 +6,7 @@
         <TextBox Name="ChatBox" HorizontalAlignment="Stretch" VerticalAlignment="Top" 
                  Height="300" Margin="10" IsReadOnly="True" TextWrapping="Wrap" 
                  VerticalScrollBarVisibility="Auto"/>
-        <TextBox Name="MessageBox" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
+        <TextBox Name="InputMessage" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
                  Height="30" Margin="10,0,90,10" TextWrapping="Wrap"/>
         <Button Content="Send" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                 Width="80" Height="30" Margin="0,0,10,10" Click="SendButton_Click"/>
